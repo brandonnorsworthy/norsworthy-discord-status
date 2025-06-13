@@ -13,9 +13,3 @@ services:
     stop_grace_period: 90s
     mem_limit: 4g
     cpus: 1
-    networks:
-      - shared-net
-
-networks:
-  shared-net:
-    external: true
