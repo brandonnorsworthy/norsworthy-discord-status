@@ -6,7 +6,7 @@ const { generateImage } = require('../lib/generateImage');
 const IMAGE_PATH = path.join(__dirname, '../public/status-card.png');
 const MAX_AGE_MS = 60 * 1000;
 
-module.exports = () => {
+module.exports = (isGenerating) => {
   const router = express.Router()
 
   router.get('/status-card.png', async (req, res) => {
@@ -21,8 +21,9 @@ module.exports = () => {
         if (age > MAX_AGE_MS) regenerate = true;
       }
 
-      if (regenerate) {
-        console.log("Generating new status image...");
+      if (regenerate && !isGenerating) {
+        isGenerating = true;
+        console.log(`[${new Date().toISOString()}] Generating new status image...`);
         await generateImage();
       }
 

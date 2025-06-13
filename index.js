@@ -5,6 +5,7 @@ const updateDiscordStatus = require('./jobs/updateDiscordStatus');
 
 const app = express();
 const serverport = PORT || 3000;
+let isGenerating = false;
 
 app.use((req, res, next) => {
   if (req.method !== 'GET' || (req.path !== '/status-card.png' && req.path !== '/')) {
@@ -18,7 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', router());
+app.use('/', router(isGenerating));
 
 app.listen(serverport, () => {
   console.log(`Server listening on http://localhost:${serverport}`);
