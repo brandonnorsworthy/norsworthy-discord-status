@@ -9,6 +9,4 @@ function updateDiscordStatus() {
 
 console.log("Starting Discord status updater...");
 
-// Update every 60 seconds
-updateDiscordStatus(); // run once immediately
-setInterval(updateDiscordStatus, 60 * 1000);
+module.exports = updateDiscordStatus;
