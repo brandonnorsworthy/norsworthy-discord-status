@@ -5,6 +5,7 @@ const { generateImage } = require('../lib/generateImage');
 
 const IMAGE_PATH = path.join(__dirname, '../public/status-card.png');
 const MAX_AGE_MS = 60 * 1000;
+let isGenerating = false;
 
 module.exports = () => {
   const router = express.Router()
@@ -21,8 +22,9 @@ module.exports = () => {
         if (age > MAX_AGE_MS) regenerate = true;
       }
 
-      if (regenerate) {
+      if (regenerate && !isGenerating) {
         console.log("Generating new status image...");
+        isGenerating = true;
         await generateImage(); // Custom renderer
       }
 
@@ -37,6 +39,8 @@ module.exports = () => {
     } catch (err) {
       console.error("Image handler error:", err);
       res.status(500).send('Server error');
+    } finally {
+      isGenerating = false;
     }
   });
 
