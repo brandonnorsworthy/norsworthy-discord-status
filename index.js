@@ -2,6 +2,7 @@ const express = require('express');
 const { PORT } = require('./lib/config');
 const router = require('./routes');
 const updateDiscordStatus = require('./jobs/updateDiscordStatus');
+const puppeteer = require('puppeteer');
 
 const app = express();
 const serverport = PORT || 3000;
@@ -27,6 +28,16 @@ app.listen(serverport, () => {
 // update discord message image every minute
 const updateInterval = setInterval(() => updateDiscordStatus(), 60 * 1000);
 updateDiscordStatus();
+
+// Warm up puppeteer on startup
+(async () => {
+  const browser = await puppeteer.launch({
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  await browser.close();
+})();
 
 const cleanup = async () => {
   clearInterval(updateInterval)

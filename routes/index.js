@@ -28,6 +28,11 @@ module.exports = () => {
 
       res.setHeader('Content-Type', 'image/png');
       res.setHeader('Cache-Control', 'no-store');
+
+      if (!fs.existsSync(IMAGE_PATH)) {
+        return res.sendFile(path.join(__dirname, '../public/placeholder.png'));
+      }
+
       res.sendFile(IMAGE_PATH);
     } catch (err) {
       console.error("Image handler error:", err);

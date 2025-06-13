@@ -8,6 +8,7 @@ services:
       - "3500:3500"
     volumes:
       - ./data:/data
+      - ./public:/public
     restart: unless-stopped
     stop_grace_period: 90s
     mem_limit: 4g
