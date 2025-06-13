@@ -25,8 +25,8 @@ app.listen(serverport, () => {
 });
 
 // update discord message image every minute
-const updateInterval = setInterval(() => updateDiscordStatus(), 60 * 1000);
-updateDiscordStatus();
+// const updateInterval = setInterval(() => updateDiscordStatus(), 60 * 1000);
+// updateDiscordStatus();
 
 const cleanup = async () => {
   clearInterval(updateInterval)
