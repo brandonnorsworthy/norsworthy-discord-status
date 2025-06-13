@@ -18,20 +18,20 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(router)
+app.use('/', router());
 
 app.listen(serverport, () => {
   console.log(`Server listening on http://localhost:${serverport}`);
 });
 
 // update discord message image every minute
-setInterval(updateDiscordStatus, 60 * 1000);
+const updateInterval = setInterval(() => updateDiscordStatus(), 60 * 1000);
 updateDiscordStatus();
 
 const cleanup = async () => {
-  clearInterval(updateDiscordStatus)
-  db.close()
+  clearInterval(updateInterval)
   process.exit(0)
 }
 
 process.on('SIGINT', cleanup)
+process.on('SIGTERM', cleanup)

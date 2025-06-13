@@ -15,6 +15,7 @@ function ensureDataDir() {
 
 async function sendMessage(imageUrl) {
   ensureDataDir();
+  console.log(`[${new Date().toISOString()}] Sending new message...`);
 
   const res = await axios.post(`${webhookUrl}?wait=true`, {
     embeds: [
@@ -28,7 +29,7 @@ async function sendMessage(imageUrl) {
   });
 
   fs.writeFileSync(messageIdPath, res.data.id);
-  console.log("Message sent. ID saved:", res.data.id);
+  console.log(`[${new Date().toISOString()}] Message sent. ID saved: ${res.data.id}`);
 }
 
 async function editMessage(imageUrl) {
@@ -52,7 +53,7 @@ async function editMessage(imageUrl) {
     ]
   });
 
-  console.log("Message edited. ID:", messageId);
+  console.log(`[${new Date().toISOString()}] Message edited. ID: ${messageId}`);
 }
 
 module.exports = { sendMessage, editMessage };
