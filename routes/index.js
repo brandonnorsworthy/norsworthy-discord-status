@@ -6,7 +6,7 @@ const { generateImage } = require('../lib/generateImage');
 const IMAGE_PATH = path.join(__dirname, '../public/status-card.png');
 const MAX_AGE_MS = 60 * 1000;
 
-module.exports = (isGenerating) => {
+module.exports = (state) => {
   const router = express.Router()
 
   router.get('/status-card.png', async (req, res) => {
@@ -21,10 +21,14 @@ module.exports = (isGenerating) => {
         if (age > MAX_AGE_MS) regenerate = true;
       }
 
-      if (regenerate && !isGenerating) {
-        isGenerating = true;
-        console.log(`[${new Date().toISOString()}] Generating new status image...`);
-        await generateImage();
+      if (regenerate) {
+        if (state.isGenerating) {
+          console.log(`[${new Date().toISOString()}] Generation already in progress.`);
+        } else {
+          state.isGenerating = true;
+          console.log(`[${new Date().toISOString()}] Generating new status image...`);
+          await generateImage();
+        }
       }
 
       res.setHeader('Content-Type', 'image/png');
@@ -39,7 +43,7 @@ module.exports = (isGenerating) => {
       console.error("Image handler error:", err);
       res.status(500).send('Server error');
     } finally {
-      isGenerating = false;
+      state.isGenerating = false;
     }
   });
 

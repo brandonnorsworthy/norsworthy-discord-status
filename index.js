@@ -5,7 +5,7 @@ const updateDiscordStatus = require('./jobs/updateDiscordStatus');
 
 const app = express();
 const serverport = PORT || 3000;
-let isGenerating = false;
+const state = { isGenerating: false };
 
 app.use((req, res, next) => {
   if (req.method !== 'GET' || (req.path !== '/status-card.png' && req.path !== '/')) {
@@ -19,14 +19,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', router(isGenerating));
+app.use('/', router(state));
 
 app.listen(serverport, () => {
   console.log(`Server listening on http://localhost:${serverport}`);
 });
 
-// update discord message image every minute
-const updateInterval = setInterval(() => updateDiscordStatus(), 60 * 1000);
+// update discord message image every 5 minutes
+const updateInterval = setInterval(() => updateDiscordStatus(), 1000 * 60 * 5);
 updateDiscordStatus();
 
 const cleanup = async () => {
