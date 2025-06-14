@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const { DISCORD_WEBHOOK } = require('../lib/config');
+const { chartTimeScales } = require('../lib/chartTimeScales');
 
 const webhookUrl = DISCORD_WEBHOOK;
 const dataDir = path.join(__dirname, '../data');
@@ -13,7 +14,7 @@ function ensureDataDir() {
   }
 }
 
-async function sendMessage(imageUrl) {
+async function sendMessage(imageUrl, state) {
   ensureDataDir();
   console.log(`[${new Date().toISOString()}] Sending new message...`);
 
@@ -22,8 +23,8 @@ async function sendMessage(imageUrl) {
       {
         title: "Current Server Status",
         image: { url: imageUrl },
-        color: 3066993,
-        footer: { text: `Updated: ${new Date().toISOString()}` }
+        content: `Status Generated at <t:${state.imageLastGenerated}>, Current View: ${chartTimeScales[state.currentTimeViewIndex].title}`,
+        color: 3066993
       }
     ]
   });
@@ -32,10 +33,10 @@ async function sendMessage(imageUrl) {
   console.log(`[${new Date().toISOString()}] Message sent. ID saved: ${res.data.id}`);
 }
 
-async function editMessage(imageUrl) {
+async function editMessage(imageUrl, state) {
   if (!fs.existsSync(messageIdPath)) {
     console.log("Message ID file not found. Sending new message.");
-    await sendMessage(imageUrl);
+    await sendMessage(imageUrl, state);
     return;
   }
 
@@ -46,9 +47,9 @@ async function editMessage(imageUrl) {
     embeds: [
       {
         title: "Current Server Status",
+        content: `Status Generated at <t:${state.imageLastGenerated}>, Current View: ${chartTimeScales[state.currentTimeViewIndex].title}`,
         image: { url: imageUrl },
-        color: 3066993,
-        footer: { text: `Updated: ${new Date().toISOString()}` }
+        color: 3066993
       }
     ]
   });
@@ -56,4 +57,4 @@ async function editMessage(imageUrl) {
   console.log(`[${new Date().toISOString()}] Message edited. ID: ${messageId}`);
 }
 
-module.exports = { sendMessage, editMessage };
+module.exports = { editMessage };
