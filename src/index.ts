@@ -36,7 +36,7 @@ app.listen(serverPort, () => {
 });
 
 // Update Discord message image every minute
-const updateInterval = setInterval(() => updateDiscordStatus(state), 5 * 60 * 1000);
+const updateInterval = setInterval(() => updateDiscordStatus(state), 60 * 1000);
 updateDiscordStatus(state);
 
 // Graceful shutdown

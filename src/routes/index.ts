@@ -9,7 +9,7 @@ const IMAGE_PATH_A = path.join(__dirname, '../../public/status-card-a.png');
 const IMAGE_PATH_B = path.join(__dirname, '../../public/status-card-b.png');
 const PLACEHOLDER_PATH = path.join(__dirname, '../../public/placeholder.png');
 
-const THIRTY_MINUTES = 30 * 1000;
+const TEN_SECONDS = 10 * 1000;
 
 export default (state: AppState): Router => {
   const router = express.Router();
@@ -19,8 +19,8 @@ export default (state: AppState): Router => {
       const now = Date.now();
       const age = now - state.imageLastGenerated;
 
-      // Kick off new generation if older than 30 minutes and not already generating
-      if (age > THIRTY_MINUTES && !state.isGenerating) {
+      // Kick off new generation if older than 10 seconds and not already generating
+      if (age > TEN_SECONDS && !state.isGenerating) {
         state.isGenerating = true;
 
         state.generationPromise = (async () => {
