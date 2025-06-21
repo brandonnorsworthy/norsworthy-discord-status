@@ -35,8 +35,8 @@ app.listen(serverPort, () => {
   console.log(`Server listening on http://localhost:${serverPort}`);
 });
 
-// Update Discord message image every minute
-const updateInterval = setInterval(() => updateDiscordStatus(state), 60 * 1000);
+// Update Discord message image every 7 minutes
+const updateInterval = setInterval(() => updateDiscordStatus(state), 7 * 60 * 1000);
 updateDiscordStatus(state);
 
 // Graceful shutdown
