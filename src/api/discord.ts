@@ -4,6 +4,7 @@ import axios from 'axios';
 import { DISCORD_WEBHOOK } from '../lib/config';
 import { chartTimeScales } from '../lib/chartTimeScales';
 import { AppState } from '../types/AppState';
+import { logWithTime } from '../lib/logWithTime';
 
 const webhookUrl = DISCORD_WEBHOOK;
 const dataDir = path.join(__dirname, '../../data');
@@ -17,7 +18,7 @@ function ensureDataDir(): void {
 
 async function sendMessage(imageUrl: string, state: AppState): Promise<void> {
   ensureDataDir();
-  console.log(`[${new Date().toISOString()}] Sending new message...`);
+  logWithTime(`Sending new message...`);
 
   try {
     const res = await axios.post(`${webhookUrl}?wait=true`, {
@@ -32,15 +33,15 @@ async function sendMessage(imageUrl: string, state: AppState): Promise<void> {
     });
 
     fs.writeFileSync(messageIdPath, res.data.id);
-    console.log(`[${new Date().toISOString()}] Message sent. ID saved: ${res.data.id}`);
+    logWithTime(`Message sent. ID saved: ${res.data.id}`);
   } catch (err: any) {
-    console.error(`[${new Date().toISOString()}] Failed to send message:`, err.message);
+    logWithTime(`Failed to send message:`, err.message);
   }
 }
 
 export async function editMessage(imageUrl: string, state: AppState): Promise<void> {
   if (!fs.existsSync(messageIdPath)) {
-    console.log('Message ID file not found. Sending new message.');
+    logWithTime('Message ID file not found. Sending new message.');
     await sendMessage(imageUrl, state);
     return;
   }
@@ -60,10 +61,18 @@ export async function editMessage(imageUrl: string, state: AppState): Promise<vo
       ],
     });
 
-    console.log(`[${new Date().toISOString()}] Message edited. ID: ${messageId}`);
+    logWithTime(`Message edited. ID: ${messageId}`);
   } catch (err: any) {
-    console.error(`[${new Date().toISOString()}] Failed to edit message:`, err.message);
-    console.log(`[${new Date().toISOString()}] Attempting to send new message instead...`);
-    await sendMessage(imageUrl, state);
+    logWithTime(`Failed to edit message:`, err.message);
+
+    if (err.response && err.response.status === 404) {
+      // Message not found, remove the message ID file
+      if (fs.existsSync(messageIdPath)) {
+        fs.unlinkSync(messageIdPath);
+        logWithTime(`Message ID file deleted due to 404.`);
+      }
+      logWithTime(`Received 404. Attempting to send new message...`);
+      await sendMessage(imageUrl, state);
+    }
   }
 }
