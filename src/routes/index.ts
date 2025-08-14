@@ -4,12 +4,13 @@ import path from 'path';
 import { generateImage } from '../lib/generateImage';
 import { AppState } from '../types/AppState';
 import { logWithTime } from '../lib/logWithTime';
+import { IMAGE_GEN_LOGS } from '../lib/config';
 
 const IMAGE_PATH_A = path.join(__dirname, '../../public/status-card-a.png');
 const IMAGE_PATH_B = path.join(__dirname, '../../public/status-card-b.png');
 const PLACEHOLDER_PATH = path.join(__dirname, '../../public/placeholder.png');
 
-const FIFTHTEEN_MINUTES = 15 * 60 * 1000;
+const FIFTHTEEN_MINUTES = 60 * 1000;
 
 export default (state: AppState): Router => {
   const router = express.Router();
@@ -19,6 +20,7 @@ export default (state: AppState): Router => {
       const now = Date.now();
       const age = now - state.imageLastGenerated;
 
+      IMAGE_GEN_LOGS && logWithTime(`Will Generate Image: ${age > FIFTHTEEN_MINUTES && !state.isGenerating}`)
       // Kick off new generation if older than 15 minutes and not already generating
       if (age > FIFTHTEEN_MINUTES && !state.isGenerating) {
         state.isGenerating = true;
