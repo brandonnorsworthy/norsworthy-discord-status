@@ -7,8 +7,8 @@ services:
     ports:
       - "3500:3500"
     volumes:
-      - ./data:/data
-      - ./public:/public
+      - ./data:/app/data
+      - ./public:/app/public
     restart: unless-stopped
     stop_grace_period: 90s
     mem_limit: 4g

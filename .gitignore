@@ -2,6 +2,7 @@ node_modules/
 public/build/
 .env
 .DS_Store
+dist/
 
 public/status-card.png
 public/status-card-b.png
